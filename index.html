@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Timestamp Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #36393f;
+            color: white;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        input {
+            width: 250px;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #2f3136;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Discord Timestamp Generator</h1>
+    <input type="datetime-local" id="datetime" />
+    <button onclick="generateTimestamps()">Generate</button>
+    <div class="output" id="output"></div>
+
+    <script>
+        function generateDiscordTimestamps(dateInput) {
+            const timestamp = Math.floor(new Date(dateInput).getTime() / 1000);
+            return {
+                ShortTime: `<t:${timestamp}:t>` ,
+                LongTime: `<t:${timestamp}:T>` ,
+                ShortDate: `<t:${timestamp}:d>` ,
+                LongDate: `<t:${timestamp}:D>` ,
+                ShortDateTime: `<t:${timestamp}:f>` ,
+                LongDateTime: `<t:${timestamp}:F>` ,
+                RelativeTime: `<t:${timestamp}:R>`
+            };
+        }
+
+        function generateTimestamps() {
+            const datetime = document.getElementById("datetime").value;
+            if (!datetime) return;
+            const timestamps = generateDiscordTimestamps(datetime);
+            let outputHtml = "";
+            for (let key in timestamps) {
+                outputHtml += `<p><strong>${key}:</strong> ${timestamps[key]}</p>`;
+            }
+            document.getElementById("output").innerHTML = outputHtml;
+        }
+    </script>
+</body>
+</html>
