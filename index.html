@@ -66,19 +66,6 @@
     <h1>Discord Timestamp Generator</h1>
     <input type="datetime-local" id="datetime" />
     <button onclick="generateTimestamps();">Generate</button>
-    <script>
-      function setDefaultTime() {
-        const now = new Date();
-        const offset = new Date().getTimezoneOffset() * 60000;
-        const localISOTime = new Date(Date.now() - offset)
-          .toISOString()
-          .slice(0, 16);
-        const formattedDate = localISOTime;
-        document.getElementById("datetime").value = formattedDate;
-      }
-      // Set the default time when the page loads
-      window.onload = setDefaultTime;
-    </script>
     <div class="output" id="output"></div>
 
     <script>
@@ -151,6 +138,19 @@
         }
         document.getElementById("output").innerHTML = outputHtml;
       }
+      function setDefaultTime() {
+        const now = new Date();
+        const offset = new Date().getTimezoneOffset() * 60000;
+        const localISOTime = new Date(Date.now() - offset)
+          .toISOString()
+          .slice(0, 16);
+        const formattedDate = localISOTime;
+        document.getElementById("datetime").value = formattedDate;
+      }
+      window.onload = function () {
+        setDefaultTime();
+        generateTimestamps();
+      };
     </script>
   </body>
 </html>
