@@ -1,63 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Discord Timestamp Generator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #36393f;
-            color: white;
-        }
-        input, button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        input {
-            width: 250px;
-        }
-        .output {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #2f3136;
-            border-radius: 5px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+        background-color: #36393f;
+        color: white;
+      }
+      input,
+      button {
+        margin: 10px;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+      }
+      input {
+        width: 250px;
+      }
+      button {
+        background-color: #5865f2;
+        color: white;
+        cursor: pointer;
+      }
+      .output {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #2f3136;
+        border-radius: 5px;
+        text-align: left;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .timestamp-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .timestamp-container:last-child {
+        border-bottom: none;
+      }
+      .timestamp-preview {
+        font-family: sans-serif;
+        background-color: #202225;
+        font-size: medium;
+        padding: 5px 10px;
+        border-radius: 4px;
+        color: #b9bbbe;
+      }
+      .timestamp-code {
+        font-family: monospace;
+        color: #dcddde;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Discord Timestamp Generator</h1>
     <input type="datetime-local" id="datetime" />
-    <button onclick="generateTimestamps()">Generate</button>
+    <button onclick="generateTimestamps();">Generate</button>
+    <script>
+      function setDefaultTime() {
+        const now = new Date();
+        const offset = new Date().getTimezoneOffset() * 60000;
+        const localISOTime = new Date(Date.now() - offset)
+          .toISOString()
+          .slice(0, 16);
+        const formattedDate = localISOTime;
+        document.getElementById("datetime").value = formattedDate;
+      }
+      // Set the default time when the page loads
+      window.onload = setDefaultTime;
+    </script>
     <div class="output" id="output"></div>
 
     <script>
-        function generateDiscordTimestamps(dateInput) {
-            const timestamp = Math.floor(new Date(dateInput).getTime() / 1000);
-            return {
-                ShortTime: `<t:${timestamp}:t>` ,
-                LongTime: `<t:${timestamp}:T>` ,
-                ShortDate: `<t:${timestamp}:d>` ,
-                LongDate: `<t:${timestamp}:D>` ,
-                ShortDateTime: `<t:${timestamp}:f>` ,
-                LongDateTime: `<t:${timestamp}:F>` ,
-                RelativeTime: `<t:${timestamp}:R>`
-            };
-        }
+      function generateDiscordTimestamps(dateInput) {
+        const date = new Date(dateInput);
+        const timestamp = Math.floor(date.getTime() / 1000);
+        return {
+          "Short Time": {
+            preview: date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            format: `t:${timestamp}:t`,
+          },
+          "Long Time": {
+            preview: date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            }),
+            format: `t:${timestamp}:T`,
+          },
+          "Short Date": {
+            preview: date.toLocaleDateString(),
+            format: `t:${timestamp}:d`,
+          },
+          "Long Date": {
+            preview: date.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }),
+            format: `t:${timestamp}:D`,
+          },
+          "Short Date/Time": {
+            preview: date.toLocaleString([], {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+            format: `t:${timestamp}:f`,
+          },
+          "Long Date/Time": {
+            preview: date.toLocaleString([], {
+              dateStyle: "full",
+              timeStyle: "short",
+            }),
+            format: `t:${timestamp}:F`,
+          },
+          "Relative Time": {
+            preview: `in ${Math.floor((date - new Date()) / 60000)} minutes`,
+            format: `t:${timestamp}:R`,
+          },
+        };
+      }
 
-        function generateTimestamps() {
-            const datetime = document.getElementById("datetime").value;
-            if (!datetime) return;
-            const timestamps = generateDiscordTimestamps(datetime);
-            let outputHtml = "";
-            for (let key in timestamps) {
-                outputHtml += `<p><strong>${key}:</strong> ${timestamps[key]}</p>`;
-            }
-            document.getElementById("output").innerHTML = outputHtml;
+      function generateTimestamps() {
+        const datetime = document.getElementById("datetime").value;
+        if (!datetime) return;
+        const timestamps = generateDiscordTimestamps(datetime);
+        let outputHtml = "";
+        for (let key in timestamps) {
+          outputHtml += `<p><strong>${key}:</strong> <span class='timestamp'>${timestamps[key].preview}</span>
+              <br>
+                <div style="margin-top: 10px;">
+                <big class='timestamp-code'>Format:
+                  <code class='timestamp-preview' style="user-select: all;">&lt;${timestamps[key].format}&gt;</code>
+                </big>
+                </div>
+                </p>`;
         }
+        document.getElementById("output").innerHTML = outputHtml;
+      }
     </script>
-</body>
+  </body>
 </html>
