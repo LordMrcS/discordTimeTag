@@ -121,6 +121,16 @@
           },
         };
       }
+      showCopyNotification = () => {
+        const notification = document.createElement("div");
+        notification.classList.add("notification");
+        notification.textContent = "Copied to clipboard!";
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 2000);
+      };
+
 
       function generateTimestamps() {
         const datetime = document.getElementById("datetime").value;
@@ -132,7 +142,7 @@
               <br>
                 <div style="margin-top: 10px;">
                 <big class='timestamp-code'>Format:
-                  <code class='timestamp-preview' style="user-select: all;">&lt;${timestamps[key].format}&gt;</code>
+                    <code class='timestamp-preview' style="user-select: all; cursor: pointer;" onclick="navigator.clipboard.writeText('<${timestamps[key].format}>'); showCopyNotification();">&lt;${timestamps[key].format}&gt;</code>
                 </big>
                 </div>
                 </p>`;
